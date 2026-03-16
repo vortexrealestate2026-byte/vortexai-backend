@@ -1,7 +1,6 @@
 from celery import shared_task
-import time
 
-# import ONLY agents that actually exist
+# import ONLY agents that exist
 from app.tasks.agents_launcher import (
     zillow_scraper,
     redfin_scraper,
@@ -35,6 +34,7 @@ CANADA_CITIES = [
     "Calgary",
     "Edmonton"
 ]
+
 
 # -----------------------------
 # REAL ESTATE AGENTS
@@ -81,7 +81,7 @@ def launch_deal_analyzers():
 
 
 # -----------------------------
-# MASTER LAUNCHER
+# MASTER AGENT LAUNCHER
 # -----------------------------
 
 @shared_task
@@ -92,18 +92,3 @@ def launch_all_agents():
     launch_deal_analyzers.delay()
 
     return "All AI agents launched"
-
-
-# -----------------------------
-# AUTO SLEEP / WAKE SYSTEM
-# -----------------------------
-
-@shared_task
-def autonomous_cycle():
-
-    while True:
-
-        launch_all_agents.delay()
-
-        # sleep 2.5 hours
-        time.sleep(9000)
