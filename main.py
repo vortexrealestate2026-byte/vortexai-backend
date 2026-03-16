@@ -1,13 +1,15 @@
 from fastapi import FastAPI
-from src.tasks.scheduler import launch_all_agents
+from tasks.scheduler import launch_all_agents
 
 app = FastAPI()
 
+
 @app.get("/")
 def root():
-    return {"status": "Vortex AI backend running"}
+    return {"status": "Vortex AI running"}
+
 
 @app.get("/start-agents")
 def start_agents():
     launch_all_agents.delay()
-    return {"message": "AI agents started"}
+    return {"message": "Agents started"}
