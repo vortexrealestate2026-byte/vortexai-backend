@@ -1,7 +1,15 @@
-from agents.property_task import run_property_agent
+import asyncio
 
-def launch_agents():
+from src.tasks.property_task import run_property_agent
 
-    for i in range(25):
 
-        run_property_agent.delay()
+async def launch_all_agents():
+    print("🚀 Launching Vortex AI agents...")
+
+    tasks = [
+        asyncio.create_task(run_property_agent())
+    ]
+
+    await asyncio.gather(*tasks)
+
+    print("✅ Agents running")
