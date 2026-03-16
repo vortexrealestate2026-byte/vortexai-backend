@@ -1,37 +1,125 @@
 import asyncio
+import logging
+import os
 
-from src.agents.properties.zillow_scraper_agent import run_zillow_scraper
-from src.agents.properties.deal_scoring_agent import score_property
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from src.agents.vehicles.vehicle_inventory_agent import run_vehicle_inventory
-from src.agents.finance.loan_generation_agent import generate_loan
-from src.agents.finance.bank_submission_agent import submit_to_bank
+# Orchestrator
+from src.orchestrator.master_orchestrator import start_orchestrator
 
-from src.agents.notifications.investor_alert_agent import send_investor_alert
+# Dashboard API
+from src.api.dashboard_routes import router as dashboard_router
 
 
-async def start_orchestrator():
+# -------------------------------
+# Logging Setup
+# -------------------------------
 
-    while True:
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
-        print("⚡ VORTEX AI CYCLE START")
+logger = logging.getLogger("vortex-ai")
 
-        properties = await run_zillow_scraper()
 
-        for p in properties:
+# -------------------------------
+# FastAPI App
+# -------------------------------
 
-            score = await score_property(p)
+app = FastAPI(
+    title="Vortex AI Autonomous Deal Engine",
+    description="AI platform for real estate wholesale deals and vehicle financing automation",
+    version="1.0.0",
+)
 
-            await send_investor_alert(p, score)
 
-        vehicles = await run_vehicle_inventory()
+# -------------------------------
+# CORS (allow frontend dashboards)
+# -------------------------------
 
-        for v in vehicles:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-            loan = await generate_loan(v)
 
-            await submit_to_bank(loan)
+# -------------------------------
+# Register API Routes
+# -------------------------------
 
-        print("⚡ CYCLE COMPLETE")
+app.include_router(
+    dashboard_router,
+    prefix="/api",
+    tags=["Dashboard"]
+)
 
-        await asyncio.sleep(60)
+
+# -------------------------------
+# Root Endpoint
+# -------------------------------
+
+@app.get("/")
+def root():
+    return {
+        "platform": "Vortex AI",
+        "status": "running",
+        "version": "1.0",
+        "agents": "active"
+    }
+
+
+# -------------------------------
+# Health Check
+# -------------------------------
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "vortex-ai-backend"
+    }
+
+
+# -------------------------------
+# System Info Endpoint
+# -------------------------------
+
+@app.get("/system")
+def system_info():
+
+    return {
+        "environment": os.getenv("ENVIRONMENT", "production"),
+        "database": "connected",
+        "ai_agents": "running",
+        "orchestrator": "active"
+    }
+
+
+# -------------------------------
+# Startup Event
+# -------------------------------
+
+@app.on_event("startup")
+async def startup_event():
+
+    logger.info("🚀 Starting Vortex AI System")
+
+    # start autonomous agent orchestrator
+    asyncio.create_task(start_orchestrator())
+
+    logger.info("⚡ Autonomous AI Agents Started")
+
+
+# -------------------------------
+# Shutdown Event
+# -------------------------------
+
+@app.on_event("shutdown")
+async def shutdown_event():
+
+    logger.info("🛑 Vortex AI shutting down")
