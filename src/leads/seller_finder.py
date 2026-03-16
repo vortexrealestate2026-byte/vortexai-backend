@@ -1,16 +1,11 @@
-import asyncio
+async def find_sellers():
 
-from src.leads.seller_finder import find_sellers
-from src.leads.buyer_finder import find_investors
-from src.leads.vehicle_buyer_finder import find_vehicle_buyers
+    print("🔍 Searching for motivated property sellers...")
 
+    sellers = [
+        {"name": "John Smith", "city": "Atlanta"},
+        {"name": "Maria Lopez", "city": "Dallas"}
+    ]
 
-async def run_lead_engine():
-
-    print("🧲 Lead Engine Running")
-
-    await find_sellers()
-    await find_investors()
-    await find_vehicle_buyers()
-
-    print("✅ Lead Engine Completed")
+    for seller in sellers:
+        print("Seller lead found:", seller)
