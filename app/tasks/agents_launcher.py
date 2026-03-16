@@ -1,58 +1,74 @@
 from celery import shared_task
-import random
-import time
+from app.services.data_service import save_property, save_vehicle
 
-# =========================
-# REAL ESTATE SCRAPER AGENTS
-# =========================
+
+# -------------------------
+# REAL ESTATE SCRAPER
+# -------------------------
 
 @shared_task
 def zillow_scraper(city):
+
     print(f"Scraping Zillow in {city}")
-    time.sleep(2)
+
+    save_property(
+        city=city,
+        address="123 Main St",
+        price=150000,
+        source="zillow"
+    )
+
 
 @shared_task
 def redfin_scraper(city):
+
     print(f"Scraping Redfin in {city}")
-    time.sleep(2)
 
-@shared_task
-def facebook_property_scraper(city):
-    print(f"Scraping Facebook Marketplace properties in {city}")
-    time.sleep(2)
-
-@shared_task
-def foreclosure_scraper(city):
-    print(f"Scraping foreclosure deals in {city}")
-    time.sleep(2)
+    save_property(
+        city=city,
+        address="45 Market St",
+        price=180000,
+        source="redfin"
+    )
 
 
-# =========================
-# VEHICLE INVENTORY AGENTS
-# =========================
+# -------------------------
+# VEHICLE SCRAPER
+# -------------------------
 
 @shared_task
 def autotrader_scraper(city):
-    print(f"Scraping AutoTrader vehicles in {city}")
-    time.sleep(2)
+
+    print(f"Scraping AutoTrader in {city}")
+
+    save_vehicle(
+        city=city,
+        make="Toyota",
+        model="Camry",
+        price=12000,
+        source="autotrader"
+    )
+
 
 @shared_task
 def kijiji_vehicle_scraper(city):
-    print(f"Scraping Kijiji Autos vehicles in {city}")
-    time.sleep(2)
 
-@shared_task
-def facebook_vehicle_scraper(city):
-    print(f"Scraping Facebook Marketplace vehicles in {city}")
-    time.sleep(2)
+    print(f"Scraping Kijiji in {city}")
+
+    save_vehicle(
+        city=city,
+        make="Honda",
+        model="Civic",
+        price=9000,
+        source="kijiji"
+    )
 
 
-# =========================
-# DEAL ANALYZER AGENTS
-# =========================
+# -------------------------
+# DEAL ANALYZER
+# -------------------------
 
 @shared_task
 def deal_analyzer():
-    score = random.randint(70, 100)
-    print(f"Deal scored: {score}")
-    return score
+
+    print("Analyzing deals...")
