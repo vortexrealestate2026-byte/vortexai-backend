@@ -1,5 +1,5 @@
 from celery import shared_task
-from app.services.data_service import save_property, save_vehicle
+from src.services.data_service import save_property, save_vehicle
 
 
 # -------------------------
