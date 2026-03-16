@@ -1,14 +1,13 @@
 from celery import shared_task
+import time
 
-# import the agent tasks
+# import agent tasks
 from app.tasks.agents_launcher import (
     zillow_scraper,
     redfin_scraper,
-    facebook_property_scraper,
     foreclosure_scraper,
     autotrader_scraper,
     kijiji_vehicle_scraper,
-    facebook_vehicle_scraper,
     deal_analyzer
 )
 
@@ -38,7 +37,6 @@ CANADA_CITIES = [
     "Edmonton"
 ]
 
-
 # -----------------------------
 # REAL ESTATE AGENTS
 # -----------------------------
@@ -47,9 +45,9 @@ CANADA_CITIES = [
 def launch_real_estate_agents():
 
     for city in US_CITIES:
+
         zillow_scraper.delay(city)
         redfin_scraper.delay(city)
-        facebook_property_scraper.delay(city)
         foreclosure_scraper.delay(city)
 
     return "Real estate agents launched"
@@ -63,9 +61,9 @@ def launch_real_estate_agents():
 def launch_vehicle_agents():
 
     for city in CANADA_CITIES:
+
         autotrader_scraper.delay(city)
         kijiji_vehicle_scraper.delay(city)
-        facebook_vehicle_scraper.delay(city)
 
     return "Vehicle agents launched"
 
@@ -78,13 +76,14 @@ def launch_vehicle_agents():
 def launch_deal_analyzers():
 
     for _ in range(10):
+
         deal_analyzer.delay()
 
     return "Deal analyzers launched"
 
 
 # -----------------------------
-# MASTER LAUNCHER
+# MASTER AGENT SYSTEM
 # -----------------------------
 
 @shared_task
@@ -94,4 +93,22 @@ def launch_all_agents():
     launch_vehicle_agents.delay()
     launch_deal_analyzers.delay()
 
-    return "All 60 AI agents launched"
+    return "All AI agents launched"
+
+
+# -----------------------------
+# AUTONOMOUS LOOP
+# -----------------------------
+
+@shared_task
+def autonomous_agent_cycle():
+
+    while True:
+
+        # wake agents
+        launch_all_agents.delay()
+
+        # agents sleep 2–3 hours
+        sleep_time = 7200 + (3600 * 0.5)   # ~2.5 hours
+
+        time.sleep(sleep_time)
