@@ -1,10 +1,14 @@
+import os
 from celery import Celery
 from celery.schedules import crontab
 
+# Railway Redis connection
+REDIS_URL = os.getenv("REDIS_URL")
+
 celery_app = Celery(
     "vortex_agents",
-    broker="redis://redis:6379/0",
-    backend="redis://redis:6379/0"
+    broker=REDIS_URL,
+    backend=REDIS_URL
 )
 
 celery_app.conf.timezone = "UTC"
@@ -23,9 +27,11 @@ celery_app.conf.beat_schedule = {
         "schedule": crontab(minute=0, hour="*/2"),
     },
 
-    # Deal analyzer every 2 hours
+    # Deal analyzers every 2 hours
     "run-deal-analyzers": {
         "task": "app.tasks.scheduler.launch_deal_analyzers",
         "schedule": crontab(minute=30, hour="*/2"),
     },
 }
+
+celery_app.autodiscover_tasks(["app.tasks"])
