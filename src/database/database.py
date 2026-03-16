@@ -1,18 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+import psycopg2
 import os
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost/vortex"
-)
 
-engine = create_engine(DATABASE_URL)
+def get_connection():
 
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
+    conn = psycopg2.connect(
+        os.getenv("DATABASE_URL")
+    )
 
-Base = declarative_base()
+    return conn
