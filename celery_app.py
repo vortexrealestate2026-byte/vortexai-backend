@@ -1,42 +1,12 @@
-import os
 from celery import Celery
-from celery.schedules import crontab
+import os
 
-REDIS_URL = os.getenv(
-    "REDIS_URL",
-    "redis://default:valEtDpprQzlMMnxnJQoNYthJIJQXIKJ@redis.railway.internal:6379/0"
-)
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
-celery_app = Celery(
-    "vortex_ai",
+celery = Celery(
+    "vortex",
     broker=REDIS_URL,
     backend=REDIS_URL
 )
 
-celery_app.conf.update(
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    timezone="UTC",
-    enable_utc=True,
-)
-
-celery_app.conf.beat_schedule = {
-
-    "real-estate-agents": {
-        "task": "tasks.scheduler.launch_real_estate_agents",
-        "schedule": crontab(minute=0, hour="*/3"),
-    },
-
-    "vehicle-agents": {
-        "task": "tasks.scheduler.launch_vehicle_agents",
-        "schedule": crontab(minute=0, hour="*/2"),
-    },
-
-    "deal-analyzers": {
-        "task": "tasks.scheduler.launch_deal_analyzers",
-        "schedule": crontab(minute=30, hour="*/2"),
-    },
-}
-
-celery_app.autodiscover_tasks(["tasks"])
+celery.autodiscover_tasks(["tasks"])
