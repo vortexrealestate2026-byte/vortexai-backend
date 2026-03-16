@@ -1,19 +1,19 @@
-from app.database import SessionLocal
-from app.models import Property, Vehicle
+from database import SessionLocal
+from models import Property, Vehicle
 
 
 def save_property(city, address, price, source):
 
     db = SessionLocal()
 
-    property_data = Property(
+    item = Property(
         city=city,
         address=address,
         price=price,
         source=source
     )
 
-    db.add(property_data)
+    db.add(item)
     db.commit()
     db.close()
 
@@ -22,7 +22,7 @@ def save_vehicle(city, make, model, price, source):
 
     db = SessionLocal()
 
-    vehicle_data = Vehicle(
+    item = Vehicle(
         city=city,
         make=make,
         model=model,
@@ -30,6 +30,6 @@ def save_vehicle(city, make, model, price, source):
         source=source
     )
 
-    db.add(vehicle_data)
+    db.add(item)
     db.commit()
     db.close()
