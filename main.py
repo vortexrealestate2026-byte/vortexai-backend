@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from tasks.scheduler import launch_all_agents
+from src.tasks.agent_scheduler import launch_all_agents
 
 app = FastAPI()
 
