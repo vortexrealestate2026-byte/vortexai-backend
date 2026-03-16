@@ -1,14 +1,21 @@
 import asyncio
-from src.tasks.property_task import run_property_agent
-from src.tasks.vehicle_agent import run_vehicle_agent
 
-async def launch_all_agents():
 
-    print("🚀 Launching Vortex AI agents")
+async def run_property_agents():
+    print("🏠 Property agents scanning...")
 
-    agents = [
-        asyncio.create_task(run_property_agent()),
-        asyncio.create_task(run_vehicle_agent()),
-    ]
 
-    await asyncio.gather(*agents)
+async def run_vehicle_agents():
+    print("🚗 Vehicle agents scanning...")
+
+
+async def run_analysis_agents():
+    print("📊 Deal analysis running...")
+
+
+async def run_buyer_matching_agents():
+    print("🤝 Matching buyers to deals...")
+
+
+async def run_outreach_agents():
+    print("📢 Sending investor alerts...")
