@@ -1,10 +1,7 @@
 fastapi
-uvicorn[standard]
-sqlalchemy
-alembic
-pydantic
-python-dotenv
+uvicorn
 psycopg2-binary
+redis
+celery
 requests
-pytest
-httpx
+beautifulsoup4
