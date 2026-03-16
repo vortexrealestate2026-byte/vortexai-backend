@@ -14,11 +14,11 @@ celery_app = Celery(
 )
 
 celery_app.conf.update(
-    accept_content=["json"],
     task_serializer="json",
+    accept_content=["json"],
     result_serializer="json",
     timezone="UTC",
-    enable_utc=True
+    enable_utc=True,
 )
 
 celery_app.conf.beat_schedule = {
