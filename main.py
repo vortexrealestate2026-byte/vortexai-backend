@@ -14,4 +14,4 @@ async def startup_event():
 
 @app.get("/")
 def root():
-    return {"status": "Vortex AI Running"}
+    return {"message": "Vortex AI Running"}
