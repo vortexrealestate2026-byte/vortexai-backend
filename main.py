@@ -1,15 +1,16 @@
 from fastapi import FastAPI
+import asyncio
+
 from src.tasks.agent_scheduler import launch_all_agents
 
 app = FastAPI()
 
 
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(launch_all_agents())
+
+
 @app.get("/")
 def root():
-    return {"status": "Vortex AI backend running"}
-
-
-@app.get("/start-agents")
-def start_agents():
-    launch_all_agents.delay()
-    return {"message": "AI agents started"}
+    return {"status": "Vortex AI running"}
