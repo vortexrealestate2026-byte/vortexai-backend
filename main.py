@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.tasks.scheduler import launch_agents
-
+from app.tasks.scheduler import launch_all_agents
 app = FastAPI(title="VORTEX API")
 
 # -------------------------------
