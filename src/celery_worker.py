@@ -1,15 +1,16 @@
-import os
-from dotenv import load_dotenv
 from celery import Celery
+import os
 
-load_dotenv()
-
-REDIS_URL = os.getenv("REDIS_URL")
+# Redis connection
+REDIS_URL = os.getenv(
+    "REDIS_URL",
+    "redis://localhost:6379/0"
+)
 
 celery_app = Celery(
     "vortex_ai",
     broker=REDIS_URL,
-    backend=REDIS_URL
+    backend=REDIS_URL,
 )
 
 celery_app.conf.update(
@@ -17,5 +18,5 @@ celery_app.conf.update(
     accept_content=["json"],
     result_serializer="json",
     timezone="UTC",
-    enable_utc=True
+    enable_utc=True,
 )
