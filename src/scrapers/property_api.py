@@ -16,7 +16,7 @@ def get_properties():
 
     payload = {
         "query": "price:[50000 TO 300000]",
-        "num_records": 20
+        "num_records": 10
     }
 
     headers = {
@@ -28,6 +28,13 @@ def get_properties():
 
         response = requests.post(url, json=payload, headers=headers)
 
+        # show response status
+        logger.info(f"API status: {response.status_code}")
+
+        if response.status_code != 200:
+            logger.error(f"API returned error: {response.text}")
+            return []
+
         data = response.json()
 
         properties = []
@@ -37,12 +44,10 @@ def get_properties():
             properties.append({
                 "price": p.get("price", 0),
                 "sqft": p.get("squareFootage", 1000),
-                "address": p.get("address", "Unknown"),
-                "city": p.get("city"),
-                "state": p.get("province")
+                "address": p.get("address", "Unknown")
             })
 
-        logger.info(f"Fetched {len(properties)} real properties")
+        logger.info(f"Fetched {len(properties)} properties")
 
         return properties
 
