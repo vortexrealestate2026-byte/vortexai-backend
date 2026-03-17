@@ -1,37 +1,53 @@
+# -----------------------------
+# FASTAPI SERVER
+# -----------------------------
 fastapi
 uvicorn[standard]
 
-# async tasks
+# -----------------------------
+# ASYNC TASK QUEUE
+# -----------------------------
 celery
 redis
 
-# database
+# -----------------------------
+# DATABASE
+# -----------------------------
 sqlalchemy
 psycopg2-binary
 alembic
 
-# env config
+# -----------------------------
+# ENVIRONMENT CONFIG
+# -----------------------------
 python-dotenv
 
-# scraping
+# -----------------------------
+# SCRAPING
+# -----------------------------
 requests
 beautifulsoup4
 lxml
 
-# async http
+# -----------------------------
+# ASYNC HTTP
+# -----------------------------
 httpx
 aiohttp
 
-# data processing
+# -----------------------------
+# DATA PROCESSING
+# -----------------------------
 pandas
 numpy
 
-# AI / scoring
+# -----------------------------
+# AI / DEAL SCORING
+# -----------------------------
 scikit-learn
 
-# utilities
+# -----------------------------
+# UTILITIES
+# -----------------------------
 python-dateutil
 loguru
-beautifulsoup4
-requests
-.env
