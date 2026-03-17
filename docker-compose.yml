@@ -4,27 +4,30 @@ services:
 
   api:
     build: .
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8080
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
       - redis
       - postgres
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/vortex
-      - REDIS_URL=redis://redis:6379
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vortex
+      REDIS_URL: redis://redis:6379/0
 
   worker:
     build: .
-    command: celery -A celery_app worker --loglevel=info
+    command: celery -A src.celery_app:celery_app worker --loglevel=info
     depends_on:
       - redis
       - postgres
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/vortex
-      - REDIS_URL=redis://redis:6379
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vortex
+      REDIS_URL: redis://redis:6379/0
 
   redis:
     image: redis:7
+    ports:
+      - "6379:6379"
 
   postgres:
     image: postgres:15
