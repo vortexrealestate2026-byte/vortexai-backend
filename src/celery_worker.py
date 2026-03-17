@@ -1,9 +1,15 @@
+import os
+from dotenv import load_dotenv
 from celery import Celery
+
+load_dotenv()
+
+REDIS_URL = os.getenv("REDIS_URL")
 
 celery_app = Celery(
     "vortex_ai",
-    broker="redis://redis:6379/0",
-    backend="redis://redis:6379/0"
+    broker=REDIS_URL,
+    backend=REDIS_URL
 )
 
 celery_app.conf.update(
@@ -13,5 +19,3 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True
 )
-
-celery_app.autodiscover_tasks(["src"])
