@@ -1,8 +1,13 @@
-om ..schemas.buyer import BuyerCreate, BuyerUpdate
+from fastapi import APIRouter
 
-def create_buyer(db, data: BuyerCreate):
-    buyer = db.create_buyer(data.dict())
-    return buyer
+router = APIRouter(prefix="/api/buyers", tags=["buyers"])
 
-def update_buyer(db, buyer_id: str, data: BuyerUpdate):
-    return db.update_buyer(buyer_id, data.dict(exclude_none=True))
+
+@router.get("/")
+def get_buyers():
+    return {"buyers": []}
+
+
+@router.post("/")
+def create_buyer(data: dict):
+    return {"message": "buyer created"}
