@@ -1,9 +1,23 @@
-from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from jose import jwt
+from pydantic import BaseModel
+from src.core.config import settings
 
-pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash_password(password: str) -> str:
-    return pwd.hash(password)
+class TokenData(BaseModel):
+    user_id: str | None = None
 
-def verify_password(password: str, hashed: str) -> bool:
-    return pwd.verify(password, hashed)
+
+def create_access_token(user_id: str, expires_minutes: int = 60):
+    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+
+    payload = {
+        "sub": user_id,
+        "exp": expire
+    }
+
+    return jwt.encode(
+        payload,
+        settings.SECRET_KEY,
+        algorithm=settings.JWT_ALGORITHM
+    )
