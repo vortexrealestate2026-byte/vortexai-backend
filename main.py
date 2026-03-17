@@ -7,11 +7,12 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# API Routes
+from src.api.routes import auth, properties, deals, buyers, contracts, webhooks
+from src.api.dashboard_routes import router as dashboard_router
+
 # 500 Agent Orchestrator
 from src.orchestrator.mega_orchestrator import start_mega_orchestrator
-
-# Dashboard API
-from src.api.dashboard_routes import router as dashboard_router
 
 
 # --------------------------------------------------
@@ -51,8 +52,15 @@ app.add_middleware(
 
 
 # --------------------------------------------------
-# REGISTER ROUTES
+# REGISTER API ROUTES
 # --------------------------------------------------
+
+app.include_router(auth.router)
+app.include_router(properties.router)
+app.include_router(deals.router)
+app.include_router(buyers.router)
+app.include_router(contracts.router)
+app.include_router(webhooks.router)
 
 app.include_router(
     dashboard_router,
@@ -110,7 +118,6 @@ def system_info():
         "ai_network": "500 agents",
 
         "orchestrator": "running"
-
     }
 
 
