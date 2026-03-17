@@ -1,125 +1,78 @@
 import asyncio
 import logging
-import os
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from src.scrapers.property_api import get_properties
+from src.scrapers.vehicle_api import get_vehicles
 
-# Orchestrator
-from src.orchestrator.master_orchestrator import start_orchestrator
-
-# Dashboard API
-from src.api.dashboard_routes import router as dashboard_router
-
-
-# -------------------------------
-# Logging Setup
-# -------------------------------
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+from src.ai.deal_analyzer import analyze_property
+from src.ai.vehicle_analyzer import analyze_vehicle
 
 logger = logging.getLogger("vortex-ai")
 
 
-# -------------------------------
-# FastAPI App
-# -------------------------------
+async def run_agent(agent_id):
 
-app = FastAPI(
-    title="Vortex AI Autonomous Deal Engine",
-    description="AI platform for real estate wholesale deals and vehicle financing automation",
-    version="1.0.0",
-)
+    logger.info(f"Agent {agent_id} started")
 
+    while True:
 
-# -------------------------------
-# CORS (allow frontend dashboards)
-# -------------------------------
+        try:
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+            # -------------------------
+            # PROPERTY DEAL SCAN
+            # -------------------------
 
+            properties = get_properties()
 
-# -------------------------------
-# Register API Routes
-# -------------------------------
+            for p in properties:
 
-app.include_router(
-    dashboard_router,
-    prefix="/api",
-    tags=["Dashboard"]
-)
+                analysis = analyze_property(p)
 
+                if analysis["deal_score"] >= 6:
 
-# -------------------------------
-# Root Endpoint
-# -------------------------------
+                    logger.info(
+                        f"🔥 PROPERTY DEAL FOUND | "
+                        f"Agent {agent_id} | "
+                        f"Price: {analysis['price']} | "
+                        f"Margin: {analysis['wholesale_margin']}"
+                    )
 
-@app.get("/")
-def root():
-    return {
-        "platform": "Vortex AI",
-        "status": "running",
-        "version": "1.0",
-        "agents": "active"
-    }
+            # -------------------------
+            # VEHICLE DEAL SCAN
+            # -------------------------
 
+            vehicles = get_vehicles()
 
-# -------------------------------
-# Health Check
-# -------------------------------
+            for v in vehicles:
 
-@app.get("/health")
-def health_check():
-    return {
-        "status": "healthy",
-        "service": "vortex-ai-backend"
-    }
+                vehicle_analysis = analyze_vehicle(v)
+
+                if vehicle_analysis["deal_score"] >= 5:
+
+                    logger.info(
+                        f"🚗 VEHICLE LEAD FOUND | "
+                        f"Agent {agent_id} | "
+                        f"Price: {vehicle_analysis['price']} | "
+                        f"Year: {vehicle_analysis['year']}"
+                    )
+
+        except Exception as e:
+
+            logger.error(f"Agent {agent_id} error: {str(e)}")
+
+        await asyncio.sleep(30)
 
 
-# -------------------------------
-# System Info Endpoint
-# -------------------------------
+async def start_mega_orchestrator():
 
-@app.get("/system")
-def system_info():
+    logger.info("🧠 Mega Orchestrator Booting")
 
-    return {
-        "environment": os.getenv("ENVIRONMENT", "production"),
-        "database": "connected",
-        "ai_agents": "running",
-        "orchestrator": "active"
-    }
+    tasks = []
 
+    for i in range(500):
 
-# -------------------------------
-# Startup Event
-# -------------------------------
+        tasks.append(asyncio.create_task(run_agent(i)))
 
-@app.on_event("startup")
-async def startup_event():
+    logger.info("⚡ 500 agents launched")
 
-    logger.info("🚀 Starting Vortex AI System")
-
-    # start autonomous agent orchestrator
-    asyncio.create_task(start_orchestrator())
-
-    logger.info("⚡ Autonomous AI Agents Started")
-
-
-# -------------------------------
-# Shutdown Event
-# -------------------------------
-
-@app.on_event("shutdown")
-async def shutdown_event():
-
-    logger.info("🛑 Vortex AI shutting down")
+    await asyncio.gather(*tasks)
