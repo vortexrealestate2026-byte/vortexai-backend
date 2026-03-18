@@ -1,13 +1,14 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/api/buyers", tags=["buyers"])
+router = APIRouter(prefix="/buyers", tags=["buyers"])
 
+buyers_db = []
 
 @router.get("/")
 def get_buyers():
-    return {"buyers": []}
-
+    return {"buyers": buyers_db}
 
 @router.post("/")
-def create_buyer(data: dict):
-    return {"message": "buyer created"}
+def add_buyer(data: dict):
+    buyers_db.append(data)
+    return {"message": "buyer added", "buyer": data}
