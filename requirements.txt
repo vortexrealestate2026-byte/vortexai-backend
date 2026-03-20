@@ -27,3 +27,4 @@ scikit-learn
 python-dateutil
 loguru
 python-jose[cryptography]
+pydantic-settings
