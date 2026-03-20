@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/deals", tags=["deals"])
+router = APIRouter(prefix="/api/deals", tags=["deals"])
 
 deals_db = []
 
 @router.get("/")
 def get_deals():
-    return {"deals": deals_db}
+    return deals_db
 
 @router.post("/")
 def create_deal(data: dict):
