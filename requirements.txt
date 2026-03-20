@@ -26,3 +26,4 @@ scikit-learn
 # UTILITIES
 python-dateutil
 loguru
+python-jose[cryptography]
